@@ -18,9 +18,7 @@ interface ICard{
 }
 
 interface IOrder{
-    items: string[]; // массив ID купленных товаров
     payment: string;  // способ оплаты
-    total: number; // сумма заказа
     address: string; // адрес доставки
     phone: string; // телефонный номер покупателя
     email: string; // электронная почта покупателя
