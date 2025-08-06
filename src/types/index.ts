@@ -22,6 +22,8 @@ export interface IOrder{
     address: string; // адрес доставки
     phone: string; // телефонный номер покупателя
     email: string; // электронная почта покупателя
+    items: string[];
+    total: number;
  }
 
 export interface IPage{
@@ -43,3 +45,6 @@ export interface ISuccessFulOrder {
     id: string;
     total: number;
 }
+
+export type messageError = Partial<Record<keyof IOrder, string>>;
+
