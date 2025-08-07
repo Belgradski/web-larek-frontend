@@ -48,3 +48,7 @@ export interface ISuccessFulOrder {
 
 export type messageError = Partial<Record<keyof IOrder, string>>;
 
+export interface IModal {
+    content: HTMLElement;
+}
+

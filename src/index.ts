@@ -6,34 +6,66 @@ import { LarekApi } from './components/larekApi';
 import { Page } from './components/Page';
 import { Card } from './components/Card';
 import { ensureElement, cloneTemplate } from './utils/utils';
-
+import { ICard } from './types';
+import { Modal } from './components/common/Modal';
 
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
+const cardTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
 
 
 const evt = new EventEmitter();
 const api = new LarekApi(CDN_URL, API_URL);
 const stateData = new StateApp({}, evt);
-const page = new Page(document.body, evt)
+const page = new Page(document.body, evt);
+
+const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), evt);
 
 
-
-
+//загрузка карточек
 
 api.getCards()
-    .then(data => stateData.setCatalog(data))
-    .catch((error: string) => {
-        console.error(error);
-    });
+	.then((data) => stateData.setCatalog(data))
+	.catch((error: string) => {
+		console.error(error);
+	});
+
+
     
 evt.on('items:changed', () => {
-    page.catalog = stateData.catalog.map((item) => {
-        const card = new Card('card', cloneTemplate(cardCatalogTemplate));
-        return card.render({
+	page.catalog = stateData.catalog.map((item) => {
+		const card = new Card('card', cloneTemplate(cardCatalogTemplate), {
+			onClick: () => evt.emit('card:select', item),
+		});
+		return card.render({
+			title: item.title,
+			image: item.image,
+			price: item.price,
+			category: item.category,
+		});
+	});
+});
+
+evt.on('card:select', (item:ICard) => {
+    stateData.setCardPreview(item);
+    const card = new Card('card', cloneTemplate(cardTemplate))
+    
+    modal.render({
+        content:card.render({
+            id:item.id,
             title: item.title,
             image: item.image,
-            price: item.price,
+            description: item.description,
+            selected: item.selected,
             category: item.category,
+            price: item.price,
         })
     })
+})
+
+evt.on('modal:open', () => {
+    page.scroll = true
+})
+
+evt.on('modal:close', () => {
+    page.scroll = false
 })
