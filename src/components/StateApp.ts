@@ -87,7 +87,7 @@ export class StateApp extends Model<IStateApp> {
 
         this.messageError = errors;
 
-        this.evt.emit('orderErr:change', this.messageError);
+        this.events.emit('orderErr:change', this.messageError);
         return Object.keys(errors).length === 0;
     };
 
