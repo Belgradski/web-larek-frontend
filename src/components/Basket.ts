@@ -66,7 +66,7 @@ export class CardInBasket extends Component<ICardsInBasket> {
         this._index = ensureElement<HTMLElement>('.basket__item-index', container);
         this._title = ensureElement<HTMLElement>(`.${blockName}__title`, container);
         this._price = ensureElement<HTMLElement>(`.${blockName}__price`, container);
-        this._button = ensureElement<HTMLButtonElement>(`.${blockName}__button`)
+        this._button = container.querySelector(`.${blockName}__button`)
 
         if(this._button) {
             this._button.addEventListener('click', (evt) => {

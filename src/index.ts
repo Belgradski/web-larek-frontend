@@ -8,11 +8,12 @@ import { Card } from './components/Card';
 import { ensureElement, cloneTemplate } from './utils/utils';
 import { ICard } from './types';
 import { Modal } from './components/common/Modal';
-import { Basket } from './components/Basket';
+import { Basket, CardInBasket } from './components/Basket';
 
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const cardTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
 const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
+const cardBasketTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
 
 
 const evt = new EventEmitter();
@@ -80,4 +81,21 @@ evt.on('card:add', (item: ICard) => {
     stateData.addBasket(item);
     page.counter = stateData.getCountCardBasket();
     modal.close();
+})
+
+evt.on('basket:open', () => {
+    basket.total = stateData.getTotalBasketPrice();
+    basket.items = stateData.basket.map((item, index) => {
+        const card = new CardInBasket('card', cloneTemplate(cardBasketTemplate), {
+            onClick: () => evt.emit('card:delete', item)
+        })
+        return card.render({
+            title: item.title,
+            price: item.price,
+            index: index + 1
+        })
+    })
+    modal.render({
+        content: basket.render()
+    })
 })
