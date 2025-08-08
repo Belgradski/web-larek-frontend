@@ -8,9 +8,11 @@ import { Card } from './components/Card';
 import { ensureElement, cloneTemplate } from './utils/utils';
 import { ICard } from './types';
 import { Modal } from './components/common/Modal';
+import { Basket } from './components/Basket';
 
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const cardTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
+const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
 
 
 const evt = new EventEmitter();
@@ -19,6 +21,7 @@ const stateData = new StateApp({}, evt);
 const page = new Page(document.body, evt);
 
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), evt);
+const basket = new Basket('basket', cloneTemplate(basketTemplate), evt);
 
 
 //загрузка карточек
@@ -47,7 +50,9 @@ evt.on('items:changed', () => {
 
 evt.on('card:select', (item:ICard) => {
     stateData.setCardPreview(item);
-    const card = new Card('card', cloneTemplate(cardTemplate))
+    const card = new Card('card', cloneTemplate(cardTemplate), {
+        onClick: () => evt.emit('card:add', item)
+    })
     
     modal.render({
         content:card.render({
@@ -68,4 +73,11 @@ evt.on('modal:open', () => {
 
 evt.on('modal:close', () => {
     page.scroll = false
+})
+
+evt.on('card:add', (item: ICard) => {
+    item.selected = true;
+    stateData.addBasket(item);
+    page.counter = stateData.getCountCardBasket();
+    modal.close();
 })

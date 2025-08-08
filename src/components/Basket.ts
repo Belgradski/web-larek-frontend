@@ -51,7 +51,7 @@ interface ICardsInBasket extends ICard {
 }
 
 interface doing {
-    onClick: (event: MouseEvent): void;
+    onClick: (event: MouseEvent) => void;
 }
 
 export class CardInBasket extends Component<ICardsInBasket> {
@@ -60,7 +60,7 @@ export class CardInBasket extends Component<ICardsInBasket> {
     protected _price: HTMLElement;
     protected _button: HTMLButtonElement;
     
-    constructor(blockName: string, container: HTMLElement, action?doing) {
+    constructor(blockName: string, container: HTMLElement, action?:doing) {
         super(container)
 
         this._index = ensureElement<HTMLElement>('.basket__item-index', container);
