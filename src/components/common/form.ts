@@ -11,7 +11,7 @@ export class Form<T> extends Component<IForm> {
         super(container)
 
         this.container.addEventListener('input', (e: Event) => {
-            const target = e.target as HTMLElement
+            const target = e.target as HTMLInputElement
             const value = target.value
             const field = target.name as keyof T
             this.inputChange(field, value)
