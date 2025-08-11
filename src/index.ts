@@ -99,3 +99,24 @@ evt.on('basket:open', () => {
         content: basket.render()
     })
 })
+
+evt.on('card:delete', (item:ICard) => {
+    item.selected = false;
+    stateData.removeFromBasket(item);
+    page.counter = stateData.getCountCardBasket();
+    basket.total = stateData.getTotalBasketPrice();
+    basket.items = stateData.basket.map((item, index) => {
+        const card = new CardInBasket('card', cloneTemplate(cardBasketTemplate), {
+            onClick: () => evt.emit('card:delete', item)
+        })
+        return card.render({
+            title: item.title,
+            price: item.price,
+            index: index + 1
+        })
+    })
+    modal.render({
+        content: basket.render()
+    })
+
+})
