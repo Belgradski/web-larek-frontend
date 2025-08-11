@@ -57,3 +57,6 @@ export interface IForm{
     errors: string[];
 }
 
+export interface ISuccessForm{
+    description: number;
+}
