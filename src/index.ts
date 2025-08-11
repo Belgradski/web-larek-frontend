@@ -63,9 +63,22 @@ evt.on('items:changed', () => {
 
 evt.on('card:select', (item: ICard) => {
 	stateData.setCardPreview(item);
+    const itemInBasket = stateData.basket.some((basketItem) => basketItem.id === item.id);
 	const card = new Card('card', cloneTemplate(cardTemplate), {
 		onClick: () => evt.emit('card:add', item),
-	});
+	})
+    if (itemInBasket) {
+        if (card.btn) {
+        card.btn.disabled = true;
+        card.setText(card.btn, 'Добавлен в корзину')
+        }
+    }
+    if (item.price === null) {
+        if (card.btn) {
+            card.btn.disabled = true;
+            card.setText(card.btn, 'Недоступно')
+        }
+    }
 
 	modal.render({
 		content: card.render({
