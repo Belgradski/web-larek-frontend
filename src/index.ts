@@ -169,24 +169,24 @@ evt.on('order:submit', () => {
 });
 
 evt.on('orderErr:change', (errors: Partial<IDeliveryForm>) => {
-	const { payment, address } = errors;
-	delivery.valid = !payment && !address;
+	const { payment, address } = errors
+	delivery.valid = !payment && !address
 	delivery.errors = Object.values({ payment, address })
 		.filter((i) => !!i)
-		.join(';');
+		.join('; ');
 });
 
 evt.on('contactErr:change', (errors: Partial<IContactForm>) => {
-	const { email, phone } = errors;
-	contact.valid = !email && !phone;
+	const { email, phone } = errors
+	contact.valid = !email && !phone
 	contact.errors = Object.values({ email, phone })
 		.filter((i) => !!i)
-		.join(';');
+		.join('; ');
 });
 
 evt.on(
 	'orderInput:change',
-	(data: { field: keyof IDeliveryForm; value: string }) => {
+	(data: {field: keyof IDeliveryForm; value: string }) => {
 		stateData.setOrderInput(data.field, data.value);
 	}
 );
