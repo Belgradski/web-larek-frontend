@@ -14,7 +14,7 @@ export class Basket extends Component<IBasket> {
     protected _price: HTMLElement;
     button: HTMLButtonElement;
 
-    constructor(blockName: string, container: HTMLElement, protected evt: IEvents) {
+    constructor(blockName: string, container: HTMLElement, protected event: IEvents) {
         super(container)
 
         this._list = ensureElement<HTMLElement>(`.${blockName}__list`, this.container);
@@ -23,7 +23,7 @@ export class Basket extends Component<IBasket> {
 
         if(this.button) {
             this.button.addEventListener('click', () => {
-                evt.emit('basket:order')
+                event.emit('basket:order')
             })
         }
 
@@ -60,7 +60,7 @@ export class CardInBasket extends Component<ICardsInBasket> {
     protected _price: HTMLElement;
     protected _button: HTMLButtonElement;
     
-    constructor(blockName: string, container: HTMLElement, action?:doing) {
+    constructor(blockName: string, container: HTMLElement, events: IEvents, action?: doing) {
         super(container)
 
         this._index = ensureElement<HTMLElement>('.basket__item-index', container);
@@ -70,8 +70,11 @@ export class CardInBasket extends Component<ICardsInBasket> {
 
         if(this._button) {
             this._button.addEventListener('click', (evt) => {
-                this.container.remove()
-                action?.onClick(evt)
+               if (action) {
+                action.onClick(evt)
+               } else {
+                events.emit('card:delete')
+               }  
             })
         }
     }

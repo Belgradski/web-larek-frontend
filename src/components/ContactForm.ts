@@ -3,8 +3,8 @@ import { IContactForm } from "../types";
 import { IEvents } from "./base/events";
 
 export class ContactForm extends Form<IContactForm> {
-    constructor(container: HTMLFormElement, evt: IEvents) {
-        super(container, evt);
+    constructor(container: HTMLFormElement, events: IEvents) {
+        super(container, events);
     }
 
     set email(value: string) {
@@ -15,8 +15,4 @@ export class ContactForm extends Form<IContactForm> {
         (this.container.elements.namedItem('phone') as HTMLInputElement).value = value
     }
 
-    clear() {
-        this.email = '';
-        this.phone = '';
-    }
 }

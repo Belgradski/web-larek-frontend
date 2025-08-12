@@ -24,10 +24,12 @@ export class StateApp extends Model<IStateApp> {
 
     addBasket(item: ICard) {
         this.basket.push(item)
+        this.emitChanges('basket:change');
     };
 
     removeFromBasket(items: ICard) {
         this.basket = this.basket.filter((item) => item.id !== items.id)
+        this.emitChanges('basket:change')
     };
 
     getTotalBasketPrice() {
@@ -53,25 +55,18 @@ export class StateApp extends Model<IStateApp> {
             address: '',
             phone: '',
             email: '',
-            items: [],
-            total: 0,
         }
     };
 
-    selected():void {
-        this.order.items = this.basket.map((items) => items.id)
-    };
+;
 
     clearBasket():void {
         this.basket = [];
+        this.emitChanges('basket:change')
     };
 
     clearOrder():void {
         this.order = this.getOrder();
-    };
-
-    resetSelected():void {
-        this.catalog.forEach((items) => items.selected = false);
     };
 
     validateOrder():boolean {

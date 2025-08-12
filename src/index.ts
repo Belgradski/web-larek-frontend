@@ -6,12 +6,13 @@ import { LarekApi } from './components/larekApi';
 import { Page } from './components/Page';
 import { Card } from './components/Card';
 import { ensureElement, cloneTemplate } from './utils/utils';
-import { ICard, IContactForm, IDeliveryForm } from './types';
+import { ICard, IContactForm, IDeliveryForm, IOrder } from './types';
 import { Modal } from './components/common/Modal';
 import { Basket, CardInBasket } from './components/Basket';
 import { DeliveryForm } from './components/DeliveryForm';
 import { ContactForm } from './components/ContactForm';
 import { SuccessOrder } from './components/Success';
+import { IOrderApi } from './types';
 
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const cardTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
@@ -67,18 +68,8 @@ evt.on('card:select', (item: ICard) => {
 	const card = new Card('card', cloneTemplate(cardTemplate), {
 		onClick: () => evt.emit('card:add', item),
 	})
-    if (itemInBasket) {
-        if (card.btn) {
-        card.btn.disabled = true;
-        card.setText(card.btn, 'Добавлен в корзину')
-        }
-    }
-    if (item.price === null) {
-        if (card.btn) {
-            card.btn.disabled = true;
-            card.setText(card.btn, 'Недоступно')
-        }
-    }
+    if (itemInBasket) card.isItemInBasket();
+    if (item.price === null) card.isItemPriceNull();
 
 	modal.render({
 		content: card.render({
@@ -108,18 +99,24 @@ evt.on('card:add', (item: ICard) => {
 	modal.close();
 });
 
-evt.on('basket:open', () => {
-	basket.total = stateData.getTotalBasketPrice();
-	basket.items = stateData.basket.map((item, index) => {
-		const card = new CardInBasket('card', cloneTemplate(cardBasketTemplate), {
-			onClick: () => evt.emit('card:delete', item),
-		});
+evt.on('basket:change', () => {
+    basket.total = stateData.getTotalBasketPrice();
+    page.counter = stateData.getCountCardBasket()
+    basket.items = stateData.basket.map((item, index) => {
+		const card = new CardInBasket('card', cloneTemplate(cardBasketTemplate), evt, {
+            onClick: () => evt.emit('card:delete', item)
+		})
 		return card.render({
 			title: item.title,
 			price: item.price,
 			index: index + 1,
 		});
 	});
+
+})
+
+evt.on('basket:open', () => {
+	evt.emit('basket:change');
 	modal.render({
 		content: basket.render(),
 	});
@@ -128,27 +125,13 @@ evt.on('basket:open', () => {
 evt.on('card:delete', (item: ICard) => {
 	item.selected = false;
 	stateData.removeFromBasket(item);
-	page.counter = stateData.getCountCardBasket();
-	basket.total = stateData.getTotalBasketPrice();
-	basket.items = stateData.basket.map((item, index) => {
-		const card = new CardInBasket('card', cloneTemplate(cardBasketTemplate), {
-			onClick: () => evt.emit('card:delete', item),
-		});
-		return card.render({
-			title: item.title,
-			price: item.price,
-			index: index + 1,
-		});
-	});
-	modal.render({
-		content: basket.render(),
-	});
+	
 });
 evt.on('basket:order', () => {
 	modal.render({
 		content: delivery.render({
-			address: '',
-			payment: '',
+			address: stateData.order.address || '',
+			payment: stateData.order.payment || '',
 			valid: false,
 			errors: [],
 		}),
@@ -156,12 +139,10 @@ evt.on('basket:order', () => {
 });
 
 evt.on('order:submit', () => {
-	stateData.order.total = stateData.getTotalBasketPrice();
-	stateData.selected();
 	modal.render({
 		content: contact.render({
-			email: '',
-			phone: '',
+			email: stateData.order.email || '',
+			phone: stateData.order.phone || '',
 			valid: false,
 			errors: [],
 		}),
@@ -192,7 +173,12 @@ evt.on(
 );
 
 evt.on('contacts:submit', () => {
-	api.getOrder(stateData.order)
+    const completeOrder: IOrderApi = {
+        ...stateData.order,
+        items: stateData.basket.map(item => item.id),
+        total: stateData.getTotalBasketPrice()
+    }
+	api.getOrder(completeOrder)
     .then((res) => {
 		modal.render({
 			content: successBuy.render({
@@ -201,10 +187,7 @@ evt.on('contacts:submit', () => {
 		});
         stateData.clearBasket();
         stateData.clearOrder();
-        page.counter = 0;
-        stateData.resetSelected();
-        delivery.clear();
-        contact.clear();
+        page.counter = 0;  
 	})
     .catch(() => console.error());
 });

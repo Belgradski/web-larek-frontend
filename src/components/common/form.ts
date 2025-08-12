@@ -7,7 +7,7 @@ export class Form<T> extends Component<IForm> {
     protected _errors: HTMLElement;
     protected _submit: HTMLButtonElement;
 
-    constructor(protected container: HTMLFormElement, protected evt: IEvents) {
+    constructor(protected container: HTMLFormElement, protected events: IEvents) {
         super(container)
 
         this.container.addEventListener('input', (e: Event) => {
@@ -19,7 +19,7 @@ export class Form<T> extends Component<IForm> {
 
         this.container.addEventListener('submit', (e: Event) => {
             e.preventDefault()
-            this.evt.emit(`${this.container.name}:submit`)
+            this.events.emit(`${this.container.name}:submit`)
         })
 
         this._submit = ensureElement<HTMLButtonElement>('button[type=submit]', this.container)
@@ -27,7 +27,7 @@ export class Form<T> extends Component<IForm> {
     }
 
     protected inputChange(field: keyof T, value:string) {
-        this.evt.emit('orderInput:change', {field, value})
+        this.events.emit('orderInput:change', {field, value})
         console.log('ку ку')
     }
 

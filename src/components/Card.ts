@@ -80,5 +80,14 @@ export class Card extends Component<ICard> {
         this.setText(this.btn, value)
     }
 
+    isItemInBasket() {
+        this.btn.disabled = true;
+        this.setText(this.btn, 'Добавлен в корзину')
+    }
 
+    isItemPriceNull() {
+        this.btn.disabled = true;
+        this.setText(this.btn, 'Недоступно')
+    }  
+    
 }

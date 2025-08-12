@@ -8,8 +8,8 @@ export class DeliveryForm extends Form<IDeliveryForm> {
     protected _cash: HTMLButtonElement;
     protected _address: HTMLInputElement;
 
-    constructor(container: HTMLFormElement, evt: IEvents) {
-        super(container, evt)
+    constructor(container: HTMLFormElement, events: IEvents) {
+        super(container, events)
 
         this._card = container.elements.namedItem('card') as HTMLButtonElement;
         this._cash = container.elements.namedItem('cash') as HTMLButtonElement;
@@ -31,9 +31,12 @@ export class DeliveryForm extends Form<IDeliveryForm> {
             })
         }
     }
-    clear() {
-        this._card.classList.remove('button_alt-active')
-        this._cash.classList.remove('button_alt-active')
-        this._address.value = ''
+
+    get address(): string {
+        return this._address.value;
+    }
+
+    set address(value:string) {
+        this._address.value = value;
     }
 }

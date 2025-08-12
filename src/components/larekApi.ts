@@ -1,5 +1,6 @@
 import { Api, ApiListResponse} from './base/api';
 import { ICard, IOrder, ISuccessFulOrder } from '../types';
+import { IOrderApi } from '../types';
 
 interface ILarekApi {
     getCardsId: (id: string) => Promise<ICard>;
@@ -23,7 +24,7 @@ export class LarekApi extends Api implements ILarekApi {
         return this.get(`/product`).then((data: ApiListResponse<ICard>) => data.items.map((item) => ({...item, image:this.cdn + item.image,})) );
     }
 
-    getOrder(order: IOrder): Promise<ISuccessFulOrder>{
+    getOrder(order: IOrderApi): Promise<ISuccessFulOrder>{
         return this.post(`/order`, order).then((res: ISuccessFulOrder) => ({
             id: res.id,
             total: res.total

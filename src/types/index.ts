@@ -22,9 +22,13 @@ export interface IOrder{
     address: string; // адрес доставки
     phone: string; // телефонный номер покупателя
     email: string; // электронная почта покупателя
+
+ }
+
+export interface IOrderApi extends IOrder{
     items: string[];
     total: number;
- }
+}
 
 export interface IPage{
     counter: number; // количество товаров в корзине
